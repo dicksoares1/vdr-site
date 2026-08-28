@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDR 442 - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100%;
+            background: #111;
+            border-right: 1px solid #1a1a1a;
+            padding: 25px 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar .logo {
+            text-align: center;
+            padding: 0 0 25px 0;
+            border-bottom: 1px solid #1a1a1a;
+            margin-bottom: 15px;
+        }
+        .sidebar .logo h2 {
+            color: #fff;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+        .sidebar .logo h2 span {
+            color: #FF6B00;
+        }
+        .sidebar .logo .tigre {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 12px 24px;
+            color: #888;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .sidebar a:hover {
+            color: #fff;
+            background: #1a1a1a;
+            border-left-color: #FF6B00;
+        }
+        .sidebar a.active {
+            color: #FF6B00;
+            background: #1a1a1a;
+            border-left-color: #FF6B00;
+        }
+        .sidebar a .icon {
+            margin-right: 10px;
+        }
+        .sidebar .logout {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            color: #ff4757;
+            padding: 12px 24px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+        .sidebar .logout:hover {
+            background: #1a0a0a;
+            border-left-color: #ff4757;
+        }
+        /* =========================================================
+           MAIN
+           ========================================================= */
+        .main {
+            margin-left: 220px;
+            padding: 30px 35px;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .header h1 span {
+            color: #FF6B00;
+        }
+        .header .user {
+            color: #666;
+            font-size: 14px;
+            background: #141414;
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid #1a1a1a;
+        }
+        .header .user span {
+            color: #FF6B00;
+        }
+        /* =========================================================
+           CARDS
+           ========================================================= */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #141414;
+            padding: 20px 22px;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: #2a2a2a;
+            transform: translateY(-2px);
+        }
+        .card .emoji {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+        .card .numero {
+            font-size: 30px;
+            font-weight: 700;
+            color: #FF6B00;
+        }
+        .card .label {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .card.verde .numero { color: #2ecc71; }
+        .card.azul .numero { color: #3498db; }
+        .card.amarelo .numero { color: #f1c40f; }
+        .card.vermelho .numero { color: #e74c3c; }
+        .card.roxo .numero { color: #9146FF; }
+        /* =========================================================
+           TABELAS
+           ========================================================= */
+        .tabela {
+            background: #141414;
+            border-radius: 12px;
+            border: 1px solid #1a1a1a;
+            padding: 22px 25px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .tabela h3 {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .tabela h3 .emoji {
+            margin-right: 8px;
+        }
+        .tabela table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .tabela th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #666;
+            font-weight: 500;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tabela td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #0d0d0d;
+            color: #ccc;
+        }
+        .tabela tr:hover td {
+            background: #0d0d0d;
+        }
+        .badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge.ganhou { background: #2ecc71; color: #fff; }
+        .badge.perdeu { background: #e74c3c; color: #fff; }
+        .badge.pendente { background: #f1c40f; color: #111; }
+        .badge.concluida { background: #3498db; color: #fff; }
+        /* =========================================================
+           STATUS VAZIO
+           ========================================================= */
+        .vazio {
+            color: #444;
+            font-size: 14px;
+            padding: 15px 0;
+            text-align: center;
+        }
+        .loading {
+            color: #666;
+            font-size: 14px;
+            padding: 15px 0;
+            text-align: center;
+        }
+        /* =========================================================
+           RESPONSIVO
+           ========================================================= */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #1a1a1a;
+                padding: 15px 0;
+            }
+            .sidebar .logout {
+                position: static;
+                margin-top: 10px;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+        }
+        @media (max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .card {
+                padding: 14px 16px;
+            }
+            .card .numero {
+                font-size: 22px;
+            }
+            .tabela {
+                padding: 15px;
+            }
+            .tabela table {
+                font-size: 12px;
+            }
+            .tabela th, .tabela td {
+                padding: 8px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span class="tigre">🐯</span>
+            <h2>VDR <span>442</span></h2>
+        </div>
+        <a href="#" class="active" data-pagina="dashboard"><span class="icon">📊</span>Dashboard</a>
+        <a href="#" data-pagina="metas"><span class="icon">🎯</span>Metas</a>
+        <a href="#" data-pagina="vendas"><span class="icon">🛒</span>Vendas</a>
+        <a href="#" data-pagina="producao"><span class="icon">🏭</span>Produção</a>
+        <a href="#" data-pagina="acoes"><span class="icon">⚔️</span>Ações</a>
+        <a href="#" data-pagina="usuarios"><span class="icon">👥</span>Membros</a>
+        <a href="/logout" class="logout"><span class="icon">🚪</span>Sair</a>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h1>📊 <span>Dashboard</span> VDR 442</h1>
+            <div class="user">👤 <span>{{ username }}</span></div>
+        </div>
+        <div id="conteudo">
+            <div class="loading">⏳ Carregando...</div>
+        </div>
+    </div>
+
+    <script>
+        let paginaAtual = 'dashboard';
+
+        document.querySelectorAll('.sidebar a[data-pagina]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pagina = this.dataset.pagina;
+                document.querySelectorAll('.sidebar a[data-pagina]').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+                carregarPagina(pagina);
+            });
+        });
+
+        async function carregarPagina(pagina) {
+            paginaAtual = pagina;
+            const conteudo = document.getElementById('conteudo');
+            conteudo.innerHTML = '<div class="loading">⏳ Carregando...</div>';
+
+            if (pagina === 'dashboard') {
+                await carregarDashboard();
+            } else if (pagina === 'metas') {
+                await carregarMetas();
+            } else if (pagina === 'vendas') {
+                await carregarVendas();
+            } else if (pagina === 'producao') {
+                await carregarProducao();
+            } else if (pagina === 'acoes') {
+                await carregarAcoes();
+            } else if (pagina === 'usuarios') {
+                await carregarUsuarios();
+            }
+        }
+
+        function formatarDinheiro(valor) {
+            return 'R$ ' + (valor / 1000).toFixed(1) + 'K';
+        }
+
+        function formatarData(data) {
+            if (!data) return '-';
+            const d = new Date(data);
+            return d.toLocaleDateString('pt-BR');
+        }
+
+        // =========================================================
+        // DASHBOARD
+        // =========================================================
+        async function carregarDashboard() {
+            try {
+                const res = await fetch('/api/metricas');
+                const d = await res.json();
+
+                let html = `
+                    <div class="cards">
+                        <div class="card">
+                            <div class="emoji">🎯</div>
+                            <div class="numero">${d.metas}</div>
+                            <div class="label">Metas Ativas</div>
+                        </div>
+                        <div class="card verde">
+                            <div class="emoji">💰</div>
+                            <div class="numero">${formatarDinheiro(d.vendas_hoje)}</div>
+                            <div class="label">Vendas Hoje</div>
+                        </div>
+                        <div class="card azul">
+                            <div class="emoji">🏭</div>
+                            <div class="numero">${d.producoes_ativas}</div>
+                            <div class="label">Produções Ativas</div>
+                        </div>
+                        <div class="card amarelo">
+                            <div class="emoji">⚔️</div>
+                            <div class="numero">${d.acoes_semana}</div>
+                            <div class="label">Ações na Semana</div>
+                        </div>
+                        <div class="card roxo">
+                            <div class="emoji">👥</div>
+                            <div class="numero">${d.total_membros}</div>
+                            <div class="label">Membros Registrados</div>
+                        </div>
+                    </div>
+                    <div class="cards">
+                        <div class="card">
+                            <div class="emoji">🔫</div>
+                            <div class="numero">${d.estoque_pt}</div>
+                            <div class="label">PT (pacotes)</div>
+                        </div>
+                        <div class="card">
+                            <div class="emoji">🔫</div>
+                            <div class="numero">${d.estoque_sub}</div>
+                            <div class="label">SUB (pacotes)</div>
+                        </div>
+                    </div>
+                    <div class="tabela">
+                        <h3>📋 <span style="color:#FF6B00;">Status</span> do Sistema</h3>
+                        <p style="color:#888; font-size:14px;">✅ Todos os sistemas operando normalmente</p>
+                        <p style="color:#444; font-size:13px; margin-top:8px;">🕒 Última atualização: ${new Date().toLocaleString('pt-BR')}</p>
+                    </div>
+                `;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar dashboard</div>';
+            }
+        }
+
+        // =========================================================
+        // METAS
+        // =========================================================
+        async function carregarMetas() {
+            try {
+                const res = await fetch('/api/metas');
+                const metas = await res.json();
+
+                let html = `
+                    <div class="tabela">
+                        <h3>🎯 <span style="color:#FF6B00;">Ranking</span> de Metas</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Membro</th>
+                                    <th>Dinheiro Sujo</th>
+                                    <th>Ações</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (metas.length === 0) {
+                    html += `<tr><td colspan="5" class="vazio">📭 Nenhuma meta cadastrada</td></tr>`;
+                } else {
+                    metas.forEach((m, i) => {
+                        const medalha = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+                        html += `
+                            <tr>
+                                <td>${medalha}</td>
+                                <td><strong>${m.nome}</strong></td>
+                                <td>${formatarDinheiro(m.dinheiro)}</td>
+                                <td>${formatarDinheiro(m.dinheiro_acoes)}</td>
+                                <td><strong style="color:#FF6B00;">${formatarDinheiro(m.total)}</strong></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `</tbody></table></div>`;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar metas</div>';
+            }
+        }
+
+        // =========================================================
+        // VENDAS
+        // =========================================================
+        async function carregarVendas() {
+            try {
+                const res = await fetch('/api/vendas');
+                const vendas = await res.json();
+
+                let html = `
+                    <div class="tabela">
+                        <h3>🛒 <span style="color:#FF6B00;">Últimas</span> Vendas</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Vendedor</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (vendas.length === 0) {
+                    html += `<tr><td colspan="4" class="vazio">📭 Nenhuma venda registrada</td></tr>`;
+                } else {
+                    vendas.forEach(v => {
+                        html += `
+                            <tr>
+                                <td><strong>#${String(v.pedido_numero).padStart(4, '0')}</strong></td>
+                                <td>${v.user_id}</td>
+                                <td style="color:#FF6B00;">${formatarDinheiro(v.valor)}</td>
+                                <td>${v.data}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `</tbody></table></div>`;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar vendas</div>';
+            }
+        }
+
+        // =========================================================
+        // PRODUÇÃO
+        // =========================================================
+        async function carregarProducao() {
+            try {
+                const res = await fetch('/api/producao');
+                const d = await res.json();
+
+                let html = `
+                    <div class="cards">
+                        <div class="card azul">
+                            <div class="emoji">🏭</div>
+                            <div class="numero">${d.ativas.length}</div>
+                            <div class="label">Produções Ativas</div>
+                        </div>
+                        <div class="card">
+                            <div class="emoji">💊</div>
+                            <div class="numero">${d.insumos.capsulas}</div>
+                            <div class="label">Cápsulas</div>
+                        </div>
+                        <div class="card">
+                            <div class="emoji">📦</div>
+                            <div class="numero">${d.insumos.embalagens}</div>
+                            <div class="label">Embalagens</div>
+                        </div>
+                    </div>
+                    <div class="tabela">
+                        <h3>🏭 <span style="color:#FF6B00;">Produções</span> Ativas</h3>
+                `;
+
+                if (d.ativas.length === 0) {
+                    html += `<div class="vazio">📭 Nenhuma produção ativa</div>`;
+                } else {
+                    d.ativas.forEach(p => {
+                        const fim = new Date(p.fim);
+                        const agora = new Date();
+                        const diff = Math.max(0, Math.floor((fim - agora) / 60000));
+                        const horas = Math.floor(diff / 60);
+                        const minutos = diff % 60;
+                        html += `
+                            <div style="padding:12px 0; border-bottom:1px solid #1a1a1a; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                                <div>
+                                    <strong style="color:#FF6B00;">${p.galpao}</strong>
+                                    <span style="color:#666; font-size:13px; margin-left:10px;">👤 <@${p.autor}></span>
+                                </div>
+                                <div style="color:#888; font-size:13px;">
+                                    ⏳ ${horas}h ${minutos}m restantes
+                                    <span style="color:#444; margin-left:10px;">⏰ ${new Date(p.fim).toLocaleTimeString()}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div>`;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar produção</div>';
+            }
+        }
+
+        // =========================================================
+        // AÇÕES
+        // =========================================================
+        async function carregarAcoes() {
+            try {
+                const res = await fetch('/api/acoes');
+                const acoes = await res.json();
+
+                let html = `
+                    <div class="tabela">
+                        <h3>⚔️ <span style="color:#FF6B00;">Ações</span> da Semana</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ação</th>
+                                    <th>Resultado</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (acoes.length === 0) {
+                    html += `<tr><td colspan="4" class="vazio">📭 Nenhuma ação esta semana</td></tr>`;
+                } else {
+                    acoes.forEach(a => {
+                        const badge = a.resultado === 'ganhou' ? 'ganhou' : a.resultado === 'perdeu' ? 'perdeu' : 'pendente';
+                        const label = a.resultado || 'Pendente';
+                        html += `
+                            <tr>
+                                <td><strong>${a.tipo}</strong></td>
+                                <td><span class="badge ${badge}">${label}</span></td>
+                                <td>${a.valor > 0 ? formatarDinheiro(a.valor) : '-'}</td>
+                                <td>${formatarData(a.data)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `</tbody></table></div>`;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar ações</div>';
+            }
+        }
+
+        // =========================================================
+        // USUÁRIOS
+        // =========================================================
+        async function carregarUsuarios() {
+            try {
+                const res = await fetch('/api/usuarios');
+                const usuarios = await res.json();
+
+                let html = `
+                    <div class="tabela">
+                        <h3>👥 <span style="color:#FF6B00;">Membros</span> Registrados</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (usuarios.length === 0) {
+                    html += `<tr><td colspan="4" class="vazio">📭 Nenhum membro registrado</td></tr>`;
+                } else {
+                    usuarios.forEach(u => {
+                        const tipo = u.tipo === 'Agregado' ? '🕴️ Agregado' : '🤝 Amigo';
+                        html += `
+                            <tr>
+                                <td><strong>${u.user_id}</strong></td>
+                                <td>${u.user_name}</td>
+                                <td>${tipo}</td>
+                                <td>${formatarData(u.data_registro)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `</tbody></table></div>`;
+                document.getElementById('conteudo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('conteudo').innerHTML = '<div class="vazio">❌ Erro ao carregar membros</div>';
+            }
+        }
+
+        // =========================================================
+        // INICIAR
+        // =========================================================
+        carregarDashboard();
+    </script>
+</body>
+</html>
